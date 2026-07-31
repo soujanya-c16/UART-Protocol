@@ -1,0 +1,68 @@
+`timescale 1ns/1ps
+
+module uart_tx_tb;
+
+reg clk;
+reg rst;
+reg wr_en;
+reg [7:0] data_in;
+
+wire tx;
+wire busy;
+
+// Instantiate Top Module
+uart_tx_top DUT(
+
+    .clk(clk),
+    .rst(rst),
+    .wr_en(wr_en),
+    .data_in(data_in),
+    .tx(tx),
+    .busy(busy)
+
+);
+
+// 100 MHz Clock
+always #5 clk = ~clk;
+
+initial
+begin
+
+    clk = 0;
+    rst = 1;
+    wr_en = 0;
+    data_in = 8'h00;
+
+    // Release Reset
+    #20;
+    rst = 0;
+
+    // Send First Byte
+    @(posedge clk);
+    data_in = 8'hA5;
+    wr_en = 1;
+
+    @(posedge clk);
+    wr_en = 0;
+
+    wait(busy == 0);
+
+    #100;
+
+    // Send Second Byte
+    @(posedge clk);
+    data_in = 8'h3C;
+    wr_en = 1;
+
+    @(posedge clk);
+    wr_en = 0;
+
+    wait(busy == 0);
+
+    #100;
+
+    $finish;
+
+end
+
+endmodule
