@@ -1,0 +1,37 @@
+module uart_tx_top(
+
+    input clk,
+    input rst,
+    input wr_en,
+    input [7:0] data_in,
+
+    output tx,
+    output busy
+
+);
+
+wire enb;
+
+// Baud Generator
+baud_generator BG(
+
+    .clk(clk),
+    .rst(rst),
+    .enb(enb)
+
+);
+
+// UART Transmitter
+transmitter TX(
+
+    .clk(clk),
+    .rst(rst),
+    .wr_en(wr_en),
+    .enb(enb),
+    .data_in(data_in),
+    .tx(tx),
+    .busy(busy)
+
+);
+
+endmodule
