@@ -1,0 +1,33 @@
+module baud_generator(
+
+    input clk,
+    input rst,
+    output reg enb
+
+);
+
+reg [3:0] count;
+
+always @(posedge clk)
+begin
+    if(rst)
+    begin
+        count <= 4'd0;
+        enb   <= 1'b0;
+    end
+    else
+    begin
+        if(count == 4'd9)
+        begin
+            count <= 4'd0;
+            enb   <= 1'b1;
+        end
+        else
+        begin
+            count <= count + 1'b1;
+            enb   <= 1'b0;
+        end
+    end
+end
+
+endmodule
