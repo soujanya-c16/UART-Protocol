@@ -1,0 +1,38 @@
+module uart_rx_top(
+
+
+    input clk,
+    input rst,
+    input rx,
+
+    output [7:0] data_out,
+    output done
+
+);
+
+wire enb;
+
+// Baud Generator
+baud_generator BG(
+
+    .clk(clk),
+    .rst(rst),
+    .enb(enb)
+
+);
+
+// Receiver
+receiver RX(
+
+    .clk(clk),
+    .rst(rst),
+    .enb(enb),
+    .rx(rx),
+
+    .data_out(data_out),
+    .done(done)
+
+);
+
+endmodule
+
