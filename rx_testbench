@@ -1,0 +1,80 @@
+`timescale 1ns / 1ps
+
+module uart_rx_tb;
+
+reg clk;
+reg rst;
+reg rx;
+
+wire [7:0] data_out;
+wire done;
+
+// DUT
+uart_rx_top DUT(
+
+    .clk(clk),
+    .rst(rst),
+    .rx(rx),
+
+    .data_out(data_out),
+    .done(done)
+
+);
+
+// Clock
+always #5 clk = ~clk;
+
+// Send one UART frame
+task send_byte;
+
+input [7:0] data;
+integer i;
+
+begin
+
+    // Idle
+    rx = 1;
+    #20;
+
+    // Start bit
+    rx = 0;
+    #100;
+
+    // Data bits (LSB first)
+    for(i=0;i<8;i=i+1)
+    begin
+        rx = data[i];
+        #100;
+    end
+
+    // Stop bit
+    rx = 1;
+    #100;
+
+end
+
+endtask
+
+initial
+begin
+
+    clk = 0;
+    rst = 1;
+    rx  = 1;
+
+    #20;
+    rst = 0;
+
+    send_byte(8'hA5);
+
+    #500;
+
+    send_byte(8'h3C);
+
+    #500;
+
+    $finish;
+
+end
+
+endmodule
